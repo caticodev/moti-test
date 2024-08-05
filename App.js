@@ -2,7 +2,9 @@ import { MotiView } from "moti";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
-function Shape({ val, onEnd }) {
+function Shape() {
+  const [val, setValue] = useState(100);
+
   return (
     <MotiView
       animate={{
@@ -14,7 +16,7 @@ function Shape({ val, onEnd }) {
             type: "timing",
             onDidAnimate: (finished, val, events) => {
               console.log({ finished, val, events });
-              // if (finished) onEnd();
+              if (finished) setValue(-100);
             },
           },
         ],
@@ -31,11 +33,9 @@ function Shape({ val, onEnd }) {
 }
 
 export default function App() {
-  const [val, setValue] = useState(100);
-
   return (
     <View style={styles.container}>
-      <Shape val={val} onEnd={() => setValue(val === 100 ? -100 : 100)} />
+      <Shape />
     </View>
   );
 }
