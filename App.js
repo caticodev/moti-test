@@ -1,37 +1,42 @@
-import { AnimatePresence, View } from "moti";
-import { useReducer } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { MotiView } from "moti";
+import { useState } from "react";
+import { StyleSheet, View } from "react-native";
 
-function Shape({ bg }) {
+function Shape({ val, onEnd }) {
   return (
-    <View
-      from={{
-        opacity: 0,
-        scale: 0.5,
-      }}
+    <MotiView
       animate={{
-        opacity: 1,
-        scale: 1,
+        translateY: [
+          0,
+          val,
+          {
+            value: 0,
+            type: "timing",
+            onDidAnimate: (finished, val, events) => {
+              console.log({ finished, val, events });
+              // if (finished) onEnd();
+            },
+          },
+        ],
       }}
-      exit={{
-        opacity: 0,
-        scale: 0.9,
+      transition={{
+        type: "timing",
+        duration: 1000,
+        repeat: 1,
+        repeatReverse: true,
       }}
-      style={[styles.shape, { backgroundColor: bg }]}
+      style={styles.shape}
     />
   );
 }
 
 export default function App() {
-  const [visible, toggle] = useReducer((s) => !s, true);
+  const [val, setValue] = useState(100);
 
   return (
-    <Pressable onPress={toggle} style={styles.container}>
-      <AnimatePresence exitBeforeEnter>
-        {visible && <Shape bg="hotpink" key="hotpink" />}
-        {!visible && <Shape bg="cyan" key="cyan" />}
-      </AnimatePresence>
-    </Pressable>
+    <View style={styles.container}>
+      <Shape val={val} onEnd={() => setValue(val === 100 ? -100 : 100)} />
+    </View>
   );
 }
 
