@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-  withRepeat,
+  withSequence,
   runOnJS,
 } from "react-native-reanimated";
 
@@ -17,13 +17,11 @@ export default function Shape() {
   }));
 
   useEffect(() => {
-    translateY.value = withRepeat(
+    translateY.value = withSequence(
       withTiming(val, { duration: 1000 }),
-      2,
-      true,
-      () => {
+      withTiming(0, { duration: 1000 }, () => {
         runOnJS(setValue)(-100);
-      }
+      })
     );
   }, [val]);
 
