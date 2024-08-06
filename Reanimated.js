@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { StyleSheet } from "react-native";
 import Animated, {
   useAnimatedStyle,
-  useSharedValue,
   withTiming,
   withSequence,
   runOnJS,
@@ -10,20 +9,20 @@ import Animated, {
 
 export default function Shape() {
   const [val, setValue] = useState(100);
-  const translateY = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
+    transform: [
+      {
+        translateY: withSequence(
+          withTiming(0, { duration: 0 }),
+          withTiming(val, { duration: 1000 }),
+          withTiming(0, { duration: 1000 }, () => {
+            runOnJS(setValue)(-100);
+          })
+        ),
+      },
+    ],
   }));
-
-  useEffect(() => {
-    translateY.value = withSequence(
-      withTiming(val, { duration: 1000 }),
-      withTiming(0, { duration: 1000 }, () => {
-        runOnJS(setValue)(-100);
-      })
-    );
-  }, [val]);
 
   return <Animated.View style={[styles.shape, animatedStyle]} />;
 }

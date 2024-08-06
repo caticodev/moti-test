@@ -9,20 +9,25 @@ export default function Shape() {
     <MotiView
       animate={{
         translateY: [
-          0,
-          val,
           {
             value: 0,
             type: "timing",
+            duration: 0,
+          },
+          {
+            value: val,
+            type: "timing",
+            duration: 1000,
+          },
+          {
+            value: 0,
+            type: "timing",
+            duration: 1000,
             onDidAnimate: () => {
               setValue(-100);
             },
           },
         ],
-      }}
-      transition={{
-        type: "timing",
-        duration: 1000,
       }}
       style={styles.shape}
     />
