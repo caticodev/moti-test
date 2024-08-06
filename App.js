@@ -1,59 +1,59 @@
-import { MotiView } from "moti";
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text, Pressable } from "react-native";
+import Moti from "./Moti";
+import Reanimated from "./Reanimated";
 
-function Shape() {
-  const [val, setValue] = useState(100);
-
-  return (
-    <MotiView
-      animate={{
-        translateY: [
-          0,
-          val,
-          {
-            value: 0,
-            type: "timing",
-            onDidAnimate: (finished, val, events) => {
-              console.log({ finished, val, events });
-              if (finished) setValue(-100);
-            },
-          },
-        ],
-      }}
-      transition={{
-        type: "timing",
-        duration: 1000,
-        repeat: 1,
-        repeatReverse: true,
-      }}
-      style={styles.shape}
-    />
-  );
-}
+const variants = {
+  moti: Moti,
+  reanimated: Reanimated,
+};
 
 export default function App() {
+  const [variant, setVariant] = useState("moti");
+  const Comp = variants[variant];
+
   return (
     <View style={styles.container}>
-      <Shape />
+      <View style={styles.bar}>
+        <Pressable onPress={() => setVariant("moti")}>
+          <Text style={[styles.text, variant === "moti" && styles.active]}>
+            Moti
+          </Text>
+        </Pressable>
+        <Pressable onPress={() => setVariant("reanimated")}>
+          <Text
+            style={[styles.text, variant === "reanimated" && styles.active]}
+          >
+            Reanimated
+          </Text>
+        </Pressable>
+      </View>
+      <Comp />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  shape: {
-    justifyContent: "center",
-    height: 250,
-    width: 250,
-    borderRadius: 25,
-    marginRight: 10,
-    backgroundColor: "white",
-  },
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
     backgroundColor: "#9c1aff",
+  },
+  bar: {
+    position: "absolute",
+    top: 20,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+  },
+  text: {
+    color: "#fff",
+    fontSize: 20,
+  },
+  active: {
+    fontWeight: "bold",
+    textDecorationLine: "underline",
   },
 });
