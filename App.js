@@ -1,34 +1,25 @@
-import { useState } from "react";
-import { StyleSheet, View, Text, Pressable } from "react-native";
+import { useState, useEffect } from "react";
+import { StyleSheet, View, Text } from "react-native";
 import Moti from "./Moti";
 import Reanimated from "./Reanimated";
 
-const variants = {
-  moti: Moti,
-  reanimated: Reanimated,
-};
-
 export default function App() {
-  const [variant, setVariant] = useState("moti");
-  const Comp = variants[variant];
+  const [updated, setUpdated] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setUpdated(true), 3000);
+    return () => clearTimeout(timer);
+  }, [updated]);
 
   return (
     <View style={styles.container}>
-      <View style={styles.bar}>
-        <Pressable onPress={() => setVariant("moti")}>
-          <Text style={[styles.text, variant === "moti" && styles.active]}>
-            Moti
-          </Text>
-        </Pressable>
-        <Pressable onPress={() => setVariant("reanimated")}>
-          <Text
-            style={[styles.text, variant === "reanimated" && styles.active]}
-          >
-            Reanimated
-          </Text>
-        </Pressable>
+      <Reanimated />
+      <Moti />
+      <View style={styles.countdown}>
+        <Text style={styles.text}>
+          {updated ? "updated" : "waiting for update..."}
+        </Text>
       </View>
-      <Comp />
     </View>
   );
 }
@@ -44,6 +35,13 @@ const styles = StyleSheet.create({
   bar: {
     position: "absolute",
     top: 20,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+  },
+  countdown: {
+    position: "absolute",
+    top: 50,
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",

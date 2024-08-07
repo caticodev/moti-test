@@ -1,37 +1,35 @@
-import { useState } from "react";
-import { StyleSheet } from "react-native";
+import { useEffect } from "react";
+import { StyleSheet, Text } from "react-native";
 import Animated, {
   useAnimatedStyle,
   withTiming,
-  withSequence,
-  runOnJS,
+  withRepeat,
+  useSharedValue,
 } from "react-native-reanimated";
 
 export default function Shape() {
-  const [val, setValue] = useState(100);
+  const animation = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateY: withSequence(
-          withTiming(0, { duration: 0 }),
-          withTiming(val, { duration: 1000 }),
-          withTiming(0, { duration: 1000 }, () => {
-            runOnJS(setValue)(-100);
-          })
-        ),
-      },
-    ],
+    transform: [{ translateY: animation.value }],
   }));
 
-  return <Animated.View style={[styles.shape, animatedStyle]} />;
+  useEffect(() => {
+    animation.value = withRepeat(withTiming(100, { duration: 1000 }), -1, true);
+  }, []);
+
+  return (
+    <Animated.View style={[styles.shape, animatedStyle]}>
+      <Text style={{ textAlign: "center" }}>Reanimated</Text>
+    </Animated.View>
+  );
 }
 
 const styles = StyleSheet.create({
   shape: {
     justifyContent: "center",
-    height: 250,
-    width: 250,
+    height: 100,
+    width: 100,
     borderRadius: 25,
     marginRight: 10,
     backgroundColor: "white",
